@@ -4,7 +4,7 @@ import javax.jms.*;
 import javax.naming.InitialContext;
 import java.util.Scanner;
 
-public class TesteProdutor {
+public class TesteConsumidorFila {
 
     public static void main(String[] args) throws Exception {
         InitialContext context = new InitialContext();
@@ -15,15 +15,17 @@ public class TesteProdutor {
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         Destination fila = (Destination) context.lookup("financeiro");
+        MessageConsumer consumer = session.createConsumer(fila);
 
-        MessageProducer producer = session.createProducer(fila);
-        for (int i = 0; i < 1000; i++) {
+        consumer.setMessageListener(message -> {
+            TextMessage textMessage = (TextMessage) message;
 
-            Message message = session.createTextMessage("<pedido><id>" + i + "</id></pedido>");
-            producer.send(message);
-
-        }
-
+            try {
+                System.out.println(textMessage.getText());
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
+        });
 
         new Scanner(System.in).next();
 
