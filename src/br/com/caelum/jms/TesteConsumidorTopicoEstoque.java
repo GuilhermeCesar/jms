@@ -9,7 +9,7 @@ public class TesteConsumidorTopicoEstoque {
     public static void main(String[] args) throws Exception {
         InitialContext context = new InitialContext();
         ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup("ConnectionFactory");
-        Connection connection = connectionFactory.createConnection();
+        Connection connection = connectionFactory.createConnection("user", "senha");
         connection.setClientID("estoque");
         connection.start();
 
