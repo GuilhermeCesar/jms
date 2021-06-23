@@ -1,5 +1,7 @@
 package br.com.caelum.jms;
 
+import br.com.caelum.modelo.Pedido;
+
 import javax.jms.*;
 import javax.naming.InitialContext;
 import java.util.Scanner;
@@ -9,7 +11,7 @@ public class TesteConsumidorTopicoComercial {
     public static void main(String[] args) throws Exception {
         InitialContext context = new InitialContext();
         ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup("ConnectionFactory");
-        Connection connection = connectionFactory.createConnection("user", "senha");
+        Connection connection = connectionFactory.createConnection();
         connection.setClientID("comercial");
         connection.start();
 
@@ -19,10 +21,11 @@ public class TesteConsumidorTopicoComercial {
         MessageConsumer consumer = session.createDurableSubscriber(topico, "assinatura");
 
         consumer.setMessageListener(message -> {
-            TextMessage textMessage = (TextMessage) message;
+            ObjectMessage objectMessage = (ObjectMessage) message;
 
             try {
-                System.out.println(textMessage.getText());
+                Pedido pedido = (Pedido) objectMessage.getObject();
+                System.out.println(pedido.getCodigo());
             } catch (JMSException e) {
                 e.printStackTrace();
             }
