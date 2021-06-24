@@ -4,6 +4,8 @@ import javax.jms.*;
 import javax.naming.InitialContext;
 import java.util.Scanner;
 
+import static javax.jms.Session.SESSION_TRANSACTED;
+
 public class TesteConsumidorFila {
 
     public static void main(String[] args) throws Exception {
@@ -12,7 +14,7 @@ public class TesteConsumidorFila {
         Connection connection = connectionFactory.createConnection("user", "senha");
         connection.start();
 
-        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Session session = connection.createSession(true, SESSION_TRANSACTED);
 
         Destination fila = (Destination) context.lookup("financeiro");
         MessageConsumer consumer = session.createConsumer(fila);
@@ -21,7 +23,9 @@ public class TesteConsumidorFila {
             TextMessage textMessage = (TextMessage) message;
 
             try {
+//                message.acknowledge();
                 System.out.println(textMessage.getText());
+                session.commit();
             } catch (JMSException e) {
                 e.printStackTrace();
             }
